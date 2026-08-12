@@ -7,6 +7,18 @@ const PAGE_W_PX = Math.round(210 * 96 / 25.4); // 794px
 const PAGE_H_PX = Math.round(297 * 96 / 25.4); // 1122px
 const PADDING_PX = 80;
 
+/** Collapses \n in text nodes so html2canvas doesn't drop text after a newline character.
+ *  Skips <pre> to preserve code block formatting. */
+function collapseTextNodeNewlines(node: Node): void {
+  node.childNodes.forEach((child) => {
+    if (child.nodeType === Node.TEXT_NODE) {
+      if (child.textContent) child.textContent = child.textContent.replace(/\n[ \t]*/g, ' ');
+    } else if ((child as Element).nodeName !== 'PRE') {
+      collapseTextNodeNewlines(child);
+    }
+  });
+}
+
 /** Returns an element's top offset relative to a given ancestor, reading offsetTop
  *  at each level which forces synchronous reflow — making position reads accurate
  *  even immediately after sibling margins have been mutated in the same loop. */
@@ -55,9 +67,10 @@ function avoidPageBreaks(container: HTMLElement): void {
     }
   });
 
-  // Second pass in REVERSE DOM order so that when we check a heading, its
-  // sibling paragraph has already been evaluated and potentially moved.
-  Array.from(container.querySelectorAll<HTMLElement>('p, h1, h2, h3, h4, h5, h6'))
+  // Second pass in REVERSE DOM order: push orphaned headings whose next sibling
+  // already landed on the next page. Paragraphs excluded — pushing a p also
+  // shifts its following heading, creating a cascade gap.
+  Array.from(container.querySelectorAll<HTMLElement>('h1, h2, h3, h4, h5, h6'))
     .reverse()
     .forEach((el) => {
       const next = el.nextElementSibling as HTMLElement | null;
@@ -94,6 +107,8 @@ export async function generatePdf(htmlContent: string, filename: string): Promis
 
   const inner = document.createElement('div');
   inner.innerHTML = htmlContent;
+  // Must run on the live DOM — innerHTML serialisation would re-introduce \n if done at parse time
+  collapseTextNodeNewlines(inner);
   container.appendChild(inner);
 
   document.body.appendChild(container);
