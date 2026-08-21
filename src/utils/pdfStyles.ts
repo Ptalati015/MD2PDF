@@ -32,8 +32,9 @@ export const pdfStyles = `
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.85em;
     background-color: #f4f4f4;
-    padding: 0.15em 0.4em;
+    padding: 0.1em 0.35em;
     border-radius: 3px;
+    white-space: nowrap;
   }
   pre {
     background-color: #f8f8f8;
@@ -45,7 +46,7 @@ export const pdfStyles = `
     word-break: break-word;
     overflow-wrap: break-word;
   }
-  pre code { background: none; padding: 0; font-size: 0.85em; }
+  pre code { background: none; padding: 0; font-size: 0.85em; white-space: pre-wrap; }
 
   blockquote {
     border-left: 3px solid #aaaaaa;
@@ -54,9 +55,41 @@ export const pdfStyles = `
     color: #444444;
   }
 
-  ul { margin: 0 0 1em 0; padding-left: 2em; list-style-type: disc; }
-  ol { margin: 0 0 1em 0; padding-left: 2em; list-style-type: decimal; }
-  li { margin-bottom: 0.35em; display: list-item; }
+  ul, ol { margin: 0 0 1em 0; padding-left: 1.8em; list-style: none; }
+  li { margin-bottom: 0.35em; position: relative; }
+  li p { margin: 0 0 0.35em 0; }
+  li p:last-child { margin-bottom: 0; }
+
+  .pdf-marker {
+    position: absolute;
+    left: -1.8em;
+    width: 1.4em;
+    text-align: right;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+  }
+  .pdf-bullet {
+    position: absolute;
+    left: -1.3em;
+    font-family: inherit;
+    font-size: 1.1em;
+    line-height: inherit;
+    color: inherit;
+  }
+
+  details { display: block; margin: 0 0 1.25em 0; }
+  summary { font-weight: 600; margin-bottom: 0.5em; cursor: default; }
+
+  dl { margin: 0 0 1em 0; }
+  dt { font-weight: 700; margin-top: 0.75em; }
+  dd { margin: 0.1em 0 0.5em 1.5em; }
+
+  mark { background-color: #fef08a; color: inherit; padding: 0.1em 0.2em; border-radius: 2px; }
+  small { font-size: 0.8em; }
+  sub { vertical-align: sub; font-size: 0.75em; line-height: 0; }
+  sup { vertical-align: super; font-size: 0.75em; line-height: 0; }
 
   /* Open table style: horizontal rules only, no outer border or row fills */
   table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; }

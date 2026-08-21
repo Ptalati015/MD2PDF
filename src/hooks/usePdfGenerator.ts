@@ -114,6 +114,32 @@ export async function generatePdf(htmlContent: string, filename: string): Promis
   document.body.appendChild(container);
 
   try {
+    // PDFs cannot be interactive — force all collapsible sections open
+    container.querySelectorAll('details').forEach((d) => d.setAttribute('open', ''));
+
+    // Inject explicit list markers into DOM to avoid html2canvas native marker bugs
+    container.querySelectorAll('ol').forEach((ol) => {
+      let idx = 1;
+      const start = ol.getAttribute('start');
+      if (start) idx = parseInt(start, 10) || 1;
+      ol.querySelectorAll<HTMLElement>(':scope > li').forEach((li) => {
+        const marker = document.createElement('span');
+        marker.className = 'pdf-marker';
+        marker.textContent = `${idx}.`;
+        li.insertBefore(marker, li.firstChild);
+        idx++;
+      });
+    });
+
+    container.querySelectorAll('ul').forEach((ul) => {
+      ul.querySelectorAll<HTMLElement>(':scope > li').forEach((li) => {
+        const bullet = document.createElement('span');
+        bullet.className = 'pdf-bullet';
+        bullet.textContent = '•';
+        li.insertBefore(bullet, li.firstChild);
+      });
+    });
+
     avoidPageBreaks(container);
 
     const canvas = await html2canvas(container, {
