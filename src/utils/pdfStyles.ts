@@ -1,7 +1,12 @@
 export const pdfStyles = `
-  *, *::before, *::after { box-sizing: border-box; }
+  #pdf-render-root,
+  #pdf-render-root *,
+  #pdf-render-root *::before,
+  #pdf-render-root *::after {
+    box-sizing: border-box;
+  }
 
-  body {
+  #pdf-render-root {
     font-family: Georgia, 'Times New Roman', serif;
     font-size: 15px;
     line-height: 1.7;
@@ -10,7 +15,12 @@ export const pdfStyles = `
     padding: 0;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  #pdf-render-root h1,
+  #pdf-render-root h2,
+  #pdf-render-root h3,
+  #pdf-render-root h4,
+  #pdf-render-root h5,
+  #pdf-render-root h6 {
     font-family: Georgia, 'Times New Roman', serif;
     font-weight: 700;
     line-height: 1.25;
@@ -18,17 +28,17 @@ export const pdfStyles = `
     margin-top: 1.6em;
     margin-bottom: 0.5em;
   }
-  h1 { font-size: 1.9em; margin-top: 0; }
-  h2 { font-size: 1.3em; }
-  h3 { font-size: 1.1em; }
-  h4 { font-size: 1em; }
+  #pdf-render-root h1 { font-size: 1.9em; margin-top: 0; }
+  #pdf-render-root h2 { font-size: 1.3em; }
+  #pdf-render-root h3 { font-size: 1.1em; }
+  #pdf-render-root h4 { font-size: 1em; }
 
-  p { margin: 0 0 1em 0; }
-  a { color: #111111; text-decoration: underline; }
-  strong { font-weight: 700; }
-  em { font-style: italic; }
+  #pdf-render-root p { margin: 0 0 1em 0; }
+  #pdf-render-root a { color: #111111; text-decoration: underline; }
+  #pdf-render-root strong { font-weight: 700; }
+  #pdf-render-root em { font-style: italic; }
 
-  code {
+  #pdf-render-root code {
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.85em;
     background-color: #f4f4f4;
@@ -36,7 +46,7 @@ export const pdfStyles = `
     border-radius: 3px;
     white-space: nowrap;
   }
-  pre {
+  #pdf-render-root pre {
     background-color: #f8f8f8;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
@@ -46,9 +56,14 @@ export const pdfStyles = `
     word-break: break-word;
     overflow-wrap: break-word;
   }
-  pre code { background: none; padding: 0; font-size: 0.85em; white-space: pre-wrap; }
+  #pdf-render-root pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.85em;
+    white-space: pre-wrap;
+  }
 
-  blockquote {
+  #pdf-render-root blockquote {
     border-left: 3px solid #cbd5e1;
     padding: 0.6em 1.2em;
     margin: 1em 0 1.5em 0;
@@ -57,8 +72,10 @@ export const pdfStyles = `
     background-color: #f8fafc;
     border-radius: 0 4px 4px 0;
   }
-  blockquote p { margin: 0 0 0.5em 0; }
-  blockquote sub, blockquote cite, blockquote small {
+  #pdf-render-root blockquote p { margin: 0 0 0.5em 0; }
+  #pdf-render-root blockquote sub,
+  #pdf-render-root blockquote cite,
+  #pdf-render-root blockquote small {
     display: block;
     font-style: normal;
     color: #64748b;
@@ -68,12 +85,17 @@ export const pdfStyles = `
     position: static;
   }
 
-  ul, ol { margin: 0 0 1em 0; padding-left: 1.8em; list-style: none; }
-  li { margin-bottom: 0.35em; position: relative; }
-  li p { margin: 0 0 0.35em 0; }
-  li p:last-child { margin-bottom: 0; }
+  #pdf-render-root ul,
+  #pdf-render-root ol {
+    margin: 0 0 1em 0;
+    padding-left: 1.8em;
+    list-style: none;
+  }
+  #pdf-render-root li { margin-bottom: 0.35em; position: relative; }
+  #pdf-render-root li p { margin: 0 0 0.35em 0; }
+  #pdf-render-root li p:last-child { margin-bottom: 0; }
 
-  .pdf-marker {
+  #pdf-render-root .pdf-marker {
     position: absolute;
     left: -1.8em;
     width: 1.4em;
@@ -83,7 +105,7 @@ export const pdfStyles = `
     line-height: inherit;
     color: inherit;
   }
-  .pdf-bullet {
+  #pdf-render-root .pdf-bullet {
     position: absolute;
     left: -1.3em;
     font-family: inherit;
@@ -92,7 +114,7 @@ export const pdfStyles = `
     color: inherit;
   }
 
-  details {
+  #pdf-render-root details {
     display: block;
     margin: 1em 0 1.5em 0;
     padding: 14px 18px;
@@ -100,7 +122,7 @@ export const pdfStyles = `
     border: 1px solid #e2e8f0;
     border-radius: 6px;
   }
-  summary {
+  #pdf-render-root summary {
     display: block;
     list-style: none;
     font-weight: 700;
@@ -109,15 +131,16 @@ export const pdfStyles = `
     margin-bottom: 0.75em;
     cursor: default;
   }
-  summary::-webkit-details-marker,
-  summary::marker {
+  #pdf-render-root summary::-webkit-details-marker,
+  #pdf-render-root summary::marker {
     display: none;
   }
-  details ul, details ol {
+  #pdf-render-root details ul,
+  #pdf-render-root details ol {
     margin-bottom: 0;
   }
 
-  kbd {
+  #pdf-render-root kbd {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-size: 0.8em;
     background-color: #f4f4f5;
@@ -131,42 +154,47 @@ export const pdfStyles = `
     box-shadow: 0 1px 1px rgba(0,0,0,0.06);
   }
 
-  dl { margin: 0 0 1.25em 0; }
-  dt { font-weight: 700; margin-top: 0.75em; color: #111111; }
-  dd { margin: 0.2em 0 0.6em 1.5em; color: #333333; }
+  #pdf-render-root dl { margin: 0 0 1.25em 0; }
+  #pdf-render-root dt { font-weight: 700; margin-top: 0.75em; color: #111111; }
+  #pdf-render-root dd { margin: 0.2em 0 0.6em 1.5em; color: #333333; }
 
-  mark { background-color: #fef08a; color: inherit; padding: 0.1em 0.25em; border-radius: 2px; }
-  small { font-size: 0.85em; color: #555555; }
-  sub, sup {
+  #pdf-render-root mark { background-color: #fef08a; color: inherit; padding: 0.1em 0.25em; border-radius: 2px; }
+  #pdf-render-root small { font-size: 0.85em; color: #555555; }
+  #pdf-render-root sub,
+  #pdf-render-root sup {
     font-size: 75%;
     line-height: 0;
     position: relative;
     vertical-align: baseline;
   }
-  sup { top: -0.5em; }
-  sub { bottom: -0.25em; }
+  #pdf-render-root sup { top: -0.5em; }
+  #pdf-render-root sub { bottom: -0.25em; }
 
-  div[align="center"], p[align="center"] { text-align: center; }
+  #pdf-render-root div[align="center"],
+  #pdf-render-root p[align="center"] { text-align: center; }
 
   /* Open table style: horizontal rules only, no outer border or row fills */
-  table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; }
-  th {
+  #pdf-render-root table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; }
+  #pdf-render-root th {
     font-weight: 700;
     text-align: left;
     padding: 0.6em 0.75em;
     border-bottom: 2px solid #222222;
     font-size: 0.95em;
   }
-  td {
+  #pdf-render-root td {
     padding: 0.65em 0.75em;
     border-bottom: 1px solid #cccccc;
     vertical-align: top;
   }
-  tr:last-child td { border-bottom: none; }
+  #pdf-render-root tr:last-child td { border-bottom: none; }
 
-  img { max-width: 100%; height: auto; display: inline-block; vertical-align: middle; }
-  p img { margin-right: 6px; margin-bottom: 4px; }
-  hr { border: none; border-top: 1px solid #cccccc; margin: 1.5em 0; }
+  #pdf-render-root img { max-width: 100%; height: auto; display: inline-block; vertical-align: middle; }
+  #pdf-render-root p img { margin-right: 6px; margin-bottom: 4px; }
+  #pdf-render-root hr { border: none; border-top: 1px solid #cccccc; margin: 1.5em 0; }
   /* Prevent double-stacking when a heading immediately follows a divider */
-  hr + h1, hr + h2, hr + h3, hr + h4 { margin-top: 0.6em; }
+  #pdf-render-root hr + h1,
+  #pdf-render-root hr + h2,
+  #pdf-render-root hr + h3,
+  #pdf-render-root hr + h4 { margin-top: 0.6em; }
 `;

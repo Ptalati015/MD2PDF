@@ -95,6 +95,7 @@ function avoidPageBreaks(container: HTMLElement, inner: HTMLElement): void {
 
 export async function generatePdf(htmlContent: string, filename: string): Promise<void> {
   const container = document.createElement('div');
+  container.id = 'pdf-render-root';
   Object.assign(container.style, {
     position: 'absolute',
     top: '0',
