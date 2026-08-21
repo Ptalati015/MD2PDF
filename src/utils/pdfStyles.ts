@@ -49,10 +49,23 @@ export const pdfStyles = `
   pre code { background: none; padding: 0; font-size: 0.85em; white-space: pre-wrap; }
 
   blockquote {
-    border-left: 3px solid #aaaaaa;
-    padding: 0.25em 1em;
-    margin: 0 0 1em 1em;
-    color: #444444;
+    border-left: 3px solid #cbd5e1;
+    padding: 0.6em 1.2em;
+    margin: 1em 0 1.5em 0;
+    color: #334155;
+    font-style: italic;
+    background-color: #f8fafc;
+    border-radius: 0 4px 4px 0;
+  }
+  blockquote p { margin: 0 0 0.5em 0; }
+  blockquote sub, blockquote cite, blockquote small {
+    display: block;
+    font-style: normal;
+    color: #64748b;
+    font-size: 0.85em;
+    margin-top: 0.5em;
+    line-height: 1.4;
+    position: static;
   }
 
   ul, ol { margin: 0 0 1em 0; padding-left: 1.8em; list-style: none; }
@@ -79,17 +92,61 @@ export const pdfStyles = `
     color: inherit;
   }
 
-  details { display: block; margin: 0 0 1.25em 0; }
-  summary { font-weight: 600; margin-bottom: 0.5em; cursor: default; }
+  details {
+    display: block;
+    margin: 1em 0 1.5em 0;
+    padding: 14px 18px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+  }
+  summary {
+    display: block;
+    list-style: none;
+    font-weight: 700;
+    font-size: 0.95em;
+    color: #1e293b;
+    margin-bottom: 0.75em;
+    cursor: default;
+  }
+  summary::-webkit-details-marker,
+  summary::marker {
+    display: none;
+  }
+  details ul, details ol {
+    margin-bottom: 0;
+  }
 
-  dl { margin: 0 0 1em 0; }
-  dt { font-weight: 700; margin-top: 0.75em; }
-  dd { margin: 0.1em 0 0.5em 1.5em; }
+  kbd {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.8em;
+    background-color: #f4f4f5;
+    color: #18181b;
+    padding: 0.15em 0.45em;
+    border: 1px solid #d4d4d8;
+    border-bottom: 2px solid #a1a1aa;
+    border-radius: 4px;
+    display: inline-block;
+    line-height: 1.2;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.06);
+  }
 
-  mark { background-color: #fef08a; color: inherit; padding: 0.1em 0.2em; border-radius: 2px; }
-  small { font-size: 0.8em; }
-  sub { vertical-align: sub; font-size: 0.75em; line-height: 0; }
-  sup { vertical-align: super; font-size: 0.75em; line-height: 0; }
+  dl { margin: 0 0 1.25em 0; }
+  dt { font-weight: 700; margin-top: 0.75em; color: #111111; }
+  dd { margin: 0.2em 0 0.6em 1.5em; color: #333333; }
+
+  mark { background-color: #fef08a; color: inherit; padding: 0.1em 0.25em; border-radius: 2px; }
+  small { font-size: 0.85em; color: #555555; }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sup { top: -0.5em; }
+  sub { bottom: -0.25em; }
+
+  div[align="center"], p[align="center"] { text-align: center; }
 
   /* Open table style: horizontal rules only, no outer border or row fills */
   table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; }
@@ -107,7 +164,8 @@ export const pdfStyles = `
   }
   tr:last-child td { border-bottom: none; }
 
-  img { max-width: 100%; height: auto; }
+  img { max-width: 100%; height: auto; display: inline-block; vertical-align: middle; }
+  p img { margin-right: 6px; margin-bottom: 4px; }
   hr { border: none; border-top: 1px solid #cccccc; margin: 1.5em 0; }
   /* Prevent double-stacking when a heading immediately follows a divider */
   hr + h1, hr + h2, hr + h3, hr + h4 { margin-top: 0.6em; }

@@ -118,8 +118,21 @@ export async function generatePdf(htmlContent: string, filename: string): Promis
   document.body.appendChild(container);
 
   try {
-    // PDFs cannot be interactive — force all collapsible sections open
-    container.querySelectorAll('details').forEach((d) => d.setAttribute('open', ''));
+    // PDFs cannot be interactive — force all collapsible sections open & show expand icon
+    container.querySelectorAll('details').forEach((d) => {
+      d.setAttribute('open', '');
+      const summary = d.querySelector('summary');
+      if (summary && !summary.querySelector('.summary-icon')) {
+        const icon = document.createElement('span');
+        icon.className = 'summary-icon';
+        icon.textContent = '▼ ';
+        icon.style.display = 'inline-block';
+        icon.style.marginRight = '6px';
+        icon.style.fontSize = '0.75em';
+        icon.style.verticalAlign = 'middle';
+        summary.insertBefore(icon, summary.firstChild);
+      }
+    });
 
     // Inject explicit list markers into DOM to avoid html2canvas native marker bugs
     container.querySelectorAll('ol').forEach((ol) => {
@@ -143,6 +156,20 @@ export async function generatePdf(htmlContent: string, filename: string): Promis
         li.insertBefore(bullet, li.firstChild);
       });
     });
+
+    // Wait for any external images to load so dimensions are accurate during pagination and capture
+    const images = Array.from(container.querySelectorAll('img'));
+    if (images.length > 0) {
+      await Promise.all(
+        images.map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise<void>((resolve) => {
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+          });
+        })
+      );
+    }
 
     avoidPageBreaks(container, inner);
 
