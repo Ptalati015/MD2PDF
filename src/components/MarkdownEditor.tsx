@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Toolbar } from './Toolbar';
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
 export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, onClear }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [activeColor, setActiveColor] = useState('#ef4444');
   const historyRef = useRef<{ value: string; start: number; end: number }[]>([
     { value, start: 0, end: 0 },
   ]);
@@ -58,6 +59,32 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, on
     applySelection();
   };
 
+  const findColorSpan = (selectionStart: number, selectionEnd: number) => {
+    const regex = /<span\s+style="color:([^"]+)">([\s\S]*?)<\/span>/gi;
+    let match: RegExpExecArray | null;
+
+    while ((match = regex.exec(value))) {
+      const spanStart = match.index;
+      const spanText = match[0];
+      const spanEnd = spanStart + spanText.length;
+      const innerStart = spanStart + spanText.indexOf(match[2]);
+      const innerEnd = innerStart + match[2].length;
+
+      if (selectionStart >= innerStart && selectionEnd <= innerEnd) {
+        return {
+          spanStart,
+          spanEnd,
+          innerStart,
+          innerEnd,
+          innerText: match[2],
+          color: match[1],
+        };
+      }
+    }
+
+    return null;
+  };
+
   const handleUndo = () => {
     if (historyIndexRef.current <= 0) return;
     historyIndexRef.current -= 1;
@@ -92,6 +119,58 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, on
     const selectionEnd = selected
       ? start + before.length + selected.length
       : start + before.length + defaultText.length;
+
+    applyValueWithHistory(newValue, selectionStart, selectionEnd);
+  };
+
+  const handleInsertColor = (color: string) => {
+    setActiveColor(color);
+  };
+
+  const applySelectedColor = () => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = value.substring(start, end);
+    const enclosingSpan = findColorSpan(start, end);
+    const textToWrap = selected || 'colored text';
+    const color = activeColor;
+
+    const before = `<span style="color:${color}">`;
+    const after = '</span>';
+
+    if (enclosingSpan && selected === enclosingSpan.innerText) {
+      const newValue =
+        value.substring(0, enclosingSpan.spanStart) + before + enclosingSpan.innerText + after + value.substring(enclosingSpan.spanEnd);
+      const selectionStart = enclosingSpan.spanStart + before.length;
+      const selectionEnd = selectionStart + enclosingSpan.innerText.length;
+      applyValueWithHistory(newValue, selectionStart, selectionEnd);
+      return;
+    }
+
+    const newValue = value.substring(0, start) + before + textToWrap + after + value.substring(end);
+    const selectionStart = start + before.length;
+    const selectionEnd = selectionStart + textToWrap.length;
+
+    applyValueWithHistory(newValue, selectionStart, selectionEnd);
+  };
+
+  const handleRemoveColor = () => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const enclosingSpan = findColorSpan(start, end);
+
+    if (!enclosingSpan) return;
+
+    const newValue =
+      value.substring(0, enclosingSpan.spanStart) + enclosingSpan.innerText + value.substring(enclosingSpan.spanEnd);
+    const selectionStart = enclosingSpan.spanStart;
+    const selectionEnd = selectionStart + enclosingSpan.innerText.length;
 
     applyValueWithHistory(newValue, selectionStart, selectionEnd);
   };
@@ -197,6 +276,10 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, on
     >
       <Toolbar
         onInsert={handleInsert}
+        activeColor={activeColor}
+        onChooseColor={handleInsertColor}
+        onApplyColor={applySelectedColor}
+        onRemoveColor={handleRemoveColor}
         onUndo={handleUndo}
         onRedo={handleRedo}
         canUndo={historyIndexRef.current > 0}

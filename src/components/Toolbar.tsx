@@ -1,5 +1,9 @@
 interface Props {
   onInsert: (before: string, after?: string, defaultText?: string) => void;
+  activeColor: string;
+  onChooseColor: (color: string) => void;
+  onApplyColor: () => void;
+  onRemoveColor: () => void;
   onUndo: () => void;
   onRedo: () => void;
   canUndo: boolean;
@@ -11,6 +15,10 @@ interface Props {
 
 export function Toolbar({
   onInsert,
+  activeColor,
+  onChooseColor,
+  onApplyColor,
+  onRemoveColor,
   onUndo,
   onRedo,
   canUndo,
@@ -19,6 +27,14 @@ export function Toolbar({
   onLoadSample,
   onUploadClick,
 }: Props) {
+  const colorInputId = 'md2pdf-color-input';
+  const presetColors = [
+    { label: 'Red', value: '#ef4444' },
+    { label: 'Green', value: '#22c55e' },
+    { label: 'Blue', value: '#3b82f6' },
+    { label: 'Purple', value: '#a855f7' },
+  ];
+
   const tools = [
     { label: 'B', title: 'Bold (Ctrl+B)', before: '**', after: '**', text: 'bold text', bold: true },
     { label: 'I', title: 'Italic (Ctrl+I)', before: '*', after: '*', text: 'italic text', italic: true },
@@ -48,6 +64,7 @@ export function Toolbar({
           type="button"
           title="Undo (Ctrl+Z)"
           onClick={onUndo}
+          onMouseDown={(e) => e.preventDefault()}
           disabled={!canUndo}
           className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
         >
@@ -57,10 +74,65 @@ export function Toolbar({
           type="button"
           title="Redo (Ctrl+Y / Shift+Ctrl+Z)"
           onClick={onRedo}
+          onMouseDown={(e) => e.preventDefault()}
           disabled={!canRedo}
           className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Redo
+        </button>
+        <div className="w-px h-5 bg-zinc-800 mx-1" />
+
+        <button
+          type="button"
+          title={`Choose text color (current ${activeColor})`}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => document.getElementById(colorInputId)?.click()}
+          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800 flex items-center gap-2"
+        >
+          <span className="inline-block w-3.5 h-3.5 rounded border border-zinc-500" style={{ backgroundColor: activeColor }} />
+          <span>Pick</span>
+          <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">{activeColor}</span>
+        </button>
+        <button
+          type="button"
+          title={`Apply ${activeColor} to selected text`}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={onApplyColor}
+          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800"
+        >
+          Apply {activeColor}
+        </button>
+        <input
+          id={colorInputId}
+          type="color"
+          value={activeColor}
+          onChange={(e) => onChooseColor(e.target.value)}
+          className="sr-only"
+          aria-label="Choose text color"
+        />
+        {presetColors.map((color) => (
+          <button
+            key={color.value}
+            type="button"
+            title={`Choose ${color.label} color`}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => onChooseColor(color.value)}
+            className={[
+              'w-7 h-7 rounded-md border transition-all hover:border-zinc-400 hover:scale-105',
+              activeColor.toLowerCase() === color.value ? 'border-white ring-2 ring-white/30' : 'border-zinc-700',
+            ].join(' ')}
+            style={{ backgroundColor: color.value }}
+            aria-label={`Choose ${color.label} color`}
+          />
+        ))}
+        <button
+          type="button"
+          title="Remove color"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={onRemoveColor}
+          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-400 hover:text-white hover:bg-zinc-800"
+        >
+          No Color
         </button>
         <div className="w-px h-5 bg-zinc-800 mx-1" />
 
@@ -73,6 +145,7 @@ export function Toolbar({
               key={idx}
               type="button"
               title={t.title}
+              onMouseDown={(e) => e.preventDefault()}
               onClick={() => onInsert(t.before!, t.after, t.text)}
               className={[
                 'px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800',
