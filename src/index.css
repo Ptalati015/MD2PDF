@@ -13,6 +13,25 @@
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
   --text-faint: #52525b;
+
+  --card-info-bg: rgba(23, 37, 84, 0.4);
+  --card-info-border: #1e3a8a;
+  --card-info-text: #bfdbfe;
+  --card-info-sub: rgba(191, 219, 254, 0.7);
+
+  --card-warn-bg: rgba(69, 26, 3, 0.4);
+  --card-warn-border: #78350f;
+  --card-warn-text: #fde68a;
+  --card-warn-sub: rgba(253, 230, 138, 0.7);
+
+  --card-success-bg: rgba(6, 78, 59, 0.25);
+  --card-success-border: #064e3b;
+  --card-success-text: #a7f3d0;
+  --card-success-sub: rgba(167, 243, 208, 0.7);
+
+  --status-info-text: #93c5fd;
+  --status-success-text: #6ee7b7;
+  --status-error-text: #fca5a5;
 }
 
 [data-theme="light"] {
@@ -28,6 +47,25 @@
   --text-secondary: #52525b;
   --text-muted: #6b7280;
   --text-faint: #9ca3af;
+
+  --card-info-bg: #eff6ff;
+  --card-info-border: #bfdbfe;
+  --card-info-text: #1e3a8a;
+  --card-info-sub: #1d4ed8;
+
+  --card-warn-bg: #fffbeb;
+  --card-warn-border: #fde68a;
+  --card-warn-text: #78350f;
+  --card-warn-sub: #92400e;
+
+  --card-success-bg: #ecfdf5;
+  --card-success-border: #a7f3d0;
+  --card-success-text: #064e3b;
+  --card-success-sub: #047857;
+
+  --status-info-text: #1d4ed8;
+  --status-success-text: #047857;
+  --status-error-text: #b91c1c;
 }
 
 * {

@@ -222,19 +222,19 @@ export default function App() {
           {(status === 'generating' || isEmptyDocument) && (
             <div className="flex justify-center">
               {status === 'generating' ? (
-                <div className="w-full max-w-4xl flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-950/40 border border-blue-900 text-blue-200">
+                <div className="w-full max-w-4xl flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--card-info-bg)] border border-[var(--card-info-border)] text-[var(--card-info-text)]">
                   <span className="text-xl animate-spin">⚙️</span>
                   <div>
                     <p className="font-medium text-sm">Generating PDF…</p>
-                    <p className="text-xs text-blue-200/70">Rendering the current Markdown into a downloadable file.</p>
+                    <p className="text-xs text-[var(--card-info-sub)]">Rendering the current Markdown into a downloadable file.</p>
                   </div>
                 </div>
               ) : (
-                <div className="w-full max-w-4xl flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-950/40 border border-amber-900 text-amber-200">
+                <div className="w-full max-w-4xl flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--card-warn-bg)] border border-[var(--card-warn-border)] text-[var(--card-warn-text)]">
                   <span className="text-xl">⚠️</span>
                   <div>
                     <p className="font-medium text-sm">No content to export yet</p>
-                    <p className="text-xs text-amber-200/70">Add or upload Markdown, then click Download PDF.</p>
+                    <p className="text-xs text-[var(--card-warn-sub)]">Add or upload Markdown, then click Download PDF.</p>
                   </div>
                 </div>
               )}
@@ -283,11 +283,11 @@ export default function App() {
             </div>
 
             {isEmptyDocument && status === 'idle' && (
-              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-950/40 border border-amber-900 text-amber-200">
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--card-warn-bg)] border border-[var(--card-warn-border)] text-[var(--card-warn-text)]">
                 <span className="text-xl">⚠️</span>
                 <div>
                   <p className="font-medium text-sm">No document loaded</p>
-                  <p className="text-xs text-amber-200/70">Upload a Markdown file to enable export.</p>
+                  <p className="text-xs text-[var(--card-warn-sub)]">Upload a Markdown file to enable export.</p>
                 </div>
               </div>
             )}
@@ -297,12 +297,12 @@ export default function App() {
             <StatusMessage status={status} filename={docName ? `${docName}.md` : undefined} error={error} />
 
             {status === 'file-selected' && (
-              <div className="flex flex-col gap-3 rounded-2xl border border-blue-900 bg-blue-950/30 p-4">
+              <div className="flex flex-col gap-3 rounded-2xl border border-[var(--card-info-border)] bg-[var(--card-info-bg)] p-4">
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5 text-xl">✏️</div>
                   <div className="min-w-0">
-                    <p className="font-medium text-sm text-blue-100">Edit this file in Studio</p>
-                    <p className="text-xs text-blue-200/70">Switch to the editor to refine the Markdown before exporting.</p>
+                    <p className="font-medium text-sm text-[var(--card-info-text)]">Edit this file in Studio</p>
+                    <p className="text-xs text-[var(--card-info-sub)]">Switch to the editor to refine the Markdown before exporting.</p>
                   </div>
                 </div>
                 <button
@@ -331,12 +331,12 @@ export default function App() {
             )}
 
             {status === 'ready' && (
-              <div className="flex flex-col gap-3 rounded-2xl border border-emerald-900 bg-emerald-950/25 p-4">
+              <div className="flex flex-col gap-3 rounded-2xl border border-[var(--card-success-border)] bg-[var(--card-success-bg)] p-4">
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5 text-xl">✅</div>
                   <div className="min-w-0">
-                    <p className="font-medium text-sm text-emerald-100">PDF is ready</p>
-                    <p className="text-xs text-emerald-200/70">You can keep exporting, or open the file in Studio for more edits.</p>
+                    <p className="font-medium text-sm text-[var(--card-success-text)]">PDF is ready</p>
+                    <p className="text-xs text-[var(--card-success-sub)]">You can keep exporting, or open the file in Studio for more edits.</p>
                   </div>
                 </div>
                 <button
