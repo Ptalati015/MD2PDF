@@ -58,7 +58,7 @@ export function Toolbar({
   ];
 
   return (
-    <div className="flex items-center flex-wrap gap-1 p-2 bg-zinc-900 border-b border-zinc-800 text-xs">
+    <div className="flex items-center flex-wrap gap-1 p-2 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] text-xs">
       <div className="flex items-center flex-wrap gap-1">
         <button
           type="button"
@@ -66,7 +66,7 @@ export function Toolbar({
           onClick={onUndo}
           onMouseDown={(e) => e.preventDefault()}
           disabled={!canUndo}
-          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-strong)] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Undo
         </button>
@@ -76,29 +76,29 @@ export function Toolbar({
           onClick={onRedo}
           onMouseDown={(e) => e.preventDefault()}
           disabled={!canRedo}
-          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-strong)] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Redo
         </button>
-        <div className="w-px h-5 bg-zinc-800 mx-1" />
+        <div className="w-px h-5 bg-[var(--border-subtle)] mx-1" />
 
         <button
           type="button"
           title={`Choose text color (current ${activeColor})`}
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => document.getElementById(colorInputId)?.click()}
-          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800 flex items-center gap-2"
+          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-strong)] flex items-center gap-2"
         >
-          <span className="inline-block w-3.5 h-3.5 rounded border border-zinc-500" style={{ backgroundColor: activeColor }} />
+          <span className="inline-block w-3.5 h-3.5 rounded border border-[var(--border-strong)]" style={{ backgroundColor: activeColor }} />
           <span>Pick</span>
-          <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">{activeColor}</span>
+          <span className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-wider">{activeColor}</span>
         </button>
         <button
           type="button"
           title={`Apply ${activeColor} to selected text`}
           onMouseDown={(e) => e.preventDefault()}
           onClick={onApplyColor}
-          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800"
+          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-strong)]"
         >
           Apply {activeColor}
         </button>
@@ -118,8 +118,8 @@ export function Toolbar({
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => onChooseColor(color.value)}
             className={[
-              'w-7 h-7 rounded-md border transition-all hover:border-zinc-400 hover:scale-105',
-              activeColor.toLowerCase() === color.value ? 'border-white ring-2 ring-white/30' : 'border-zinc-700',
+              'w-7 h-7 rounded-md border transition-all hover:border-[var(--text-muted)] hover:scale-105',
+              activeColor.toLowerCase() === color.value ? 'border-white ring-2 ring-white/30' : 'border-[var(--border-strong)]',
             ].join(' ')}
             style={{ backgroundColor: color.value }}
             aria-label={`Choose ${color.label} color`}
@@ -130,11 +130,11 @@ export function Toolbar({
           title="Remove color"
           onMouseDown={(e) => e.preventDefault()}
           onClick={onRemoveColor}
-          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-400 hover:text-white hover:bg-zinc-800"
+          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-strong)]"
         >
           No Color
         </button>
-        <div className="w-px h-5 bg-zinc-800 mx-1" />
+        <div className="w-px h-5 bg-[var(--border-subtle)] mx-1" />
 
         {tools.map((t, idx) => {
           if (t.type === 'sep') {
@@ -148,7 +148,7 @@ export function Toolbar({
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => onInsert(t.before!, t.after, t.text)}
               className={[
-                'px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800',
+                'px-2.5 py-1.5 rounded-md font-medium transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-strong)]',
                 t.bold ? 'font-bold' : '',
                 t.italic ? 'italic font-serif' : '',
                 t.strike ? 'line-through' : '',
@@ -164,7 +164,7 @@ export function Toolbar({
         <button
           type="button"
           onClick={onUploadClick}
-          className="px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center gap-1.5"
+          className="px-2.5 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-strong)] transition-colors flex items-center gap-1.5"
           title="Upload .md file to editor"
         >
           <span>📁</span>
@@ -173,7 +173,7 @@ export function Toolbar({
         <button
           type="button"
           onClick={onLoadSample}
-          className="px-2.5 py-1.5 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors flex items-center gap-1.5"
+          className="px-2.5 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-strong)] transition-colors flex items-center gap-1.5"
           title="Load sample Markdown document"
         >
           <span>✨</span>
@@ -182,7 +182,7 @@ export function Toolbar({
         <button
           type="button"
           onClick={onClear}
-          className="px-2.5 py-1.5 rounded-md text-zinc-500 hover:text-red-400 hover:bg-red-950/30 transition-colors"
+          className="px-2.5 py-1.5 rounded-md text-[var(--text-muted)] hover:text-red-400 hover:bg-red-950/30 transition-colors"
           title="Clear editor"
         >
           Clear

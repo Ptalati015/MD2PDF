@@ -270,7 +270,7 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, on
 
   return (
     <div
-      className="flex flex-col h-full bg-[#111114] border border-zinc-800 rounded-xl overflow-hidden shadow-2xl"
+      className="flex flex-col h-full bg-[var(--bg-panel)] border border-[var(--border-subtle)] rounded-xl overflow-hidden shadow-2xl"
       onDragOver={(e) => e.preventDefault()}
       onDrop={handleDrop}
     >
@@ -300,7 +300,7 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, on
           placeholder="# Type or paste Markdown here, or drop a .md file..."
           spellCheck={false}
           wrap="soft"
-          className="w-full h-full p-4 bg-transparent text-zinc-100 font-mono text-sm leading-relaxed resize-none outline-none focus:ring-1 focus:ring-blue-500/30 selection:bg-blue-600/30"
+          className="w-full h-full p-4 bg-transparent text-[var(--text-primary)] font-mono text-sm leading-relaxed resize-none outline-none focus:ring-1 focus:ring-blue-500/30 selection:bg-blue-600/30"
           style={{ overflow: 'hidden', overflowWrap: 'anywhere', wordBreak: 'break-word' }}
         />
       </div>

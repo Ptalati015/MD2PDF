@@ -47,14 +47,14 @@ export function FileDropZone({ onFile }: Props) {
         'focus-visible:ring-2 focus-visible:ring-blue-500',
         dragging
           ? 'border-blue-500 bg-blue-950/30 shadow-[0_0_40px_rgba(59,130,246,0.12)]'
-          : 'border-zinc-700 hover:border-zinc-500 hover:bg-white/[0.02]',
+          : 'border-[var(--border-strong)] hover:border-[var(--text-muted)] hover:bg-[var(--bg-surface-strong)]/40',
       ].join(' ')}
     >
       <div className="text-5xl mb-4 pointer-events-none">📄</div>
-      <p className="text-zinc-200 text-lg font-medium pointer-events-none">
+      <p className="text-[var(--text-primary)] text-lg font-medium pointer-events-none">
         Drop your Markdown file here
       </p>
-      <p className="text-zinc-500 text-sm mt-2 pointer-events-none">
+      <p className="text-[var(--text-muted)] text-sm mt-2 pointer-events-none">
         or click to browse — .md files only
       </p>
       <input
