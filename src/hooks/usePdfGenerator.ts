@@ -107,7 +107,8 @@ export async function generatePdf(htmlContent: string, filename: string): Promis
       pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, pdfH);
     }
 
-    pdf.save(`${filename.replace(/\.md$/i, '')}.pdf`);
+    const safeFilename = filename.replace(/\.md$/i, '').replace(/[\/\\?%*:|"<>]/g, '_').trim() || 'document';
+    pdf.save(`${safeFilename}.pdf`);
   } finally {
     document.body.removeChild(container);
   }
