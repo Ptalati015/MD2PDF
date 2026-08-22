@@ -35,7 +35,8 @@ export default function App() {
 
   const handleGenerate = async () => {
     if (!markdownContent.trim()) {
-      alert('Please enter or load some Markdown content first.');
+      setStatus('error');
+      setError('Cannot generate a PDF from an empty document. Add or upload Markdown content first.');
       return;
     }
 
@@ -62,6 +63,14 @@ export default function App() {
     setMarkdownContent(content);
     setDocName(name.replace(/\.md$/i, ''));
     setError('');
+  };
+
+  const handleStudioChange = (content: string) => {
+    setMarkdownContent(content);
+    if (status === 'error') {
+      setStatus('idle');
+      setError('');
+    }
   };
 
   const handleLoadSample = () => {
@@ -192,7 +201,7 @@ export default function App() {
               <div className={`${viewLayout === 'editor' ? 'md:col-span-2' : ''} h-full min-h-[500px]`}>
                 <MarkdownEditor
                   value={markdownContent}
-                  onChange={setMarkdownContent}
+                  onChange={handleStudioChange}
                   onUploadFile={handleStudioUpload}
                   onLoadSample={handleLoadSample}
                   onClear={handleStudioClear}
@@ -204,6 +213,12 @@ export default function App() {
             {(viewLayout === 'preview' || viewLayout === 'split') && (
               <div className={`${viewLayout === 'preview' ? 'md:col-span-2' : ''} h-full min-h-[500px]`}>
                 <MarkdownPreview html={parsedHtml} />
+              </div>
+            )}
+
+            {status === 'error' && appMode === 'studio' && (
+              <div className="md:col-span-2">
+                <StatusMessage status={status} filename={docName ? `${docName}.md` : undefined} error={error} />
               </div>
             )}
           </div>
