@@ -275,12 +275,20 @@ export default function App() {
             <StatusMessage status={status} filename={docName ? `${docName}.md` : undefined} error={error} />
 
             {status === 'file-selected' && (
-              <button
-                onClick={handleGenerate}
-                className="w-full py-3 px-6 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white transition-all shadow-lg shadow-blue-600/20"
-              >
-                Generate PDF
-              </button>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={handleGenerate}
+                  className="w-full py-3 px-6 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white transition-all shadow-lg shadow-blue-600/20"
+                >
+                  Generate PDF
+                </button>
+                <button
+                  onClick={() => setAppMode('studio')}
+                  className="text-xs text-blue-400 hover:underline text-center py-1"
+                >
+                  Edit this file in Studio →
+                </button>
+              </div>
             )}
 
             {status === 'generating' && (
