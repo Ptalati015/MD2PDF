@@ -70,6 +70,11 @@ export default function App() {
     setError('');
   };
 
+  const handleStudioClear = () => {
+    setStatus('idle');
+    setError('');
+  };
+
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col font-sans">
       {/* Top Navigation Header */}
@@ -190,6 +195,7 @@ export default function App() {
                   onChange={setMarkdownContent}
                   onUploadFile={handleStudioUpload}
                   onLoadSample={handleLoadSample}
+                  onClear={handleStudioClear}
                 />
               </div>
             )}

@@ -6,9 +6,10 @@ interface Props {
   onChange: (val: string) => void;
   onUploadFile: (content: string, filename: string) => void;
   onLoadSample: () => void;
+  onClear?: () => void;
 }
 
-export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample }: Props) {
+export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, onClear }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const historyRef = useRef<{ value: string; start: number; end: number }[]>([
@@ -157,6 +158,7 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample }: 
 
   const handleClear = () => {
     applyValueWithHistory('', 0, 0);
+    onClear?.();
   };
 
   const handleDrop = (e: React.DragEvent) => {
