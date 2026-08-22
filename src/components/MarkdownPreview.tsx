@@ -70,7 +70,7 @@ export function MarkdownPreview({ html }: Props) {
       </div>
 
       <div className="px-4 py-1.5 bg-zinc-900/70 border-b border-zinc-800 text-[11px] text-amber-300/90">
-        Page break indicators are beta and may not always be correct.
+        Page break indicators are heuristic and may not always match the final PDF exactly. Most documents render cleanly, but complex Markdown can still vary slightly.
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-[#09090b] flex justify-center">
