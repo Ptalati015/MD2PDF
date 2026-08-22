@@ -91,7 +91,7 @@ export default function App() {
       <header className="h-14 border-b border-zinc-800 bg-[#0d0d10]/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between gap-4 sticky top-0 z-50">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-xl">📄</span>
+            <img src="/favicon.svg" alt="MD2PDF logo" className="w-6 h-6" />
             <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
               MD2PDF
             </span>
