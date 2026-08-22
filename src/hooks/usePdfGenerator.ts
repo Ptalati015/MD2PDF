@@ -1,11 +1,13 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { pdfStyles } from '../utils/pdfStyles';
-
-// A4 at 96 dpi
-const PAGE_W_PX = Math.round(210 * 96 / 25.4); // 794px
-const PAGE_H_PX = Math.round(297 * 96 / 25.4); // 1122px
-const PADDING_PX = 80;
+import {
+  PAGE_W_PX,
+  PAGE_H_PX,
+  PADDING_PX,
+  prepareDomForPaging,
+  applyAvoidPageBreaks,
+} from '../utils/pagination';
 
 /** Collapses \n in text nodes so html2canvas doesn't drop text after a newline character.
  *  Skips <pre> to preserve code block formatting. */
@@ -17,80 +19,6 @@ function collapseTextNodeNewlines(node: Node): void {
       collapseTextNodeNewlines(child);
     }
   });
-}
-
-/** Returns an element's top offset relative to a given ancestor, reading offsetTop
- *  at each level which forces synchronous reflow — making position reads accurate
- *  even immediately after sibling margins have been mutated in the same loop. */
-function getOffsetTop(el: HTMLElement, container: HTMLElement): number {
-  let top = 0;
-  let current: HTMLElement | null = el;
-  while (current && current !== container) {
-    top += current.offsetTop;
-    current = current.offsetParent as HTMLElement | null;
-  }
-  return top;
-}
-
-// Gap preserved from the bottom of a page before pushing to the next
-const PAGE_BOTTOM_MARGIN = 40;
-// Gap added at the top of the next page after a push
-const PAGE_TOP_MARGIN = 44;
-
-/** Pushes block elements that straddle a page boundary down to the next page.
- *  Iterates top-level child blocks in document order with look-ahead on headings
- *  so headings never get separated from their following content, avoiding cascading
- *  double-margin bugs. */
-function avoidPageBreaks(container: HTMLElement, inner: HTMLElement): void {
-  const children = Array.from(inner.children) as HTMLElement[];
-
-  for (let i = 0; i < children.length; i++) {
-    const el = children[i];
-    const top = getOffsetTop(el, container);
-    const height = el.offsetHeight;
-
-    if (height >= PAGE_H_PX) {
-      // For very tall lists spanning multiple pages, break at individual items
-      if (el.tagName === 'UL' || el.tagName === 'OL') {
-        const lis = Array.from(el.children) as HTMLElement[];
-        for (const li of lis) {
-          const liTop = getOffsetTop(li, container);
-          const liHeight = li.offsetHeight;
-          if (liHeight >= PAGE_H_PX) continue;
-          const liPage = Math.floor(liTop / PAGE_H_PX);
-          const nextStart = (liPage + 1) * PAGE_H_PX;
-          if (liTop + liHeight > nextStart - PAGE_BOTTOM_MARGIN) {
-            const push = nextStart + PAGE_TOP_MARGIN - liTop;
-            const cur = parseFloat(window.getComputedStyle(li).marginTop) || 0;
-            li.style.marginTop = `${cur + push}px`;
-          }
-        }
-      }
-      continue;
-    }
-
-    const pageOfTop = Math.floor(top / PAGE_H_PX);
-    const nextPageStart = (pageOfTop + 1) * PAGE_H_PX;
-
-    // Headings look ahead to ensure heading + first chunk of following content stay together
-    if (/^H[1-6]$/.test(el.tagName)) {
-      const next = el.nextElementSibling as HTMLElement | null;
-      const lookAhead = next ? Math.min(next.offsetHeight, 160) : 60;
-      const neededHeight = height + lookAhead;
-
-      if (top + neededHeight > nextPageStart - PAGE_BOTTOM_MARGIN) {
-        const push = nextPageStart + PAGE_TOP_MARGIN - top;
-        const cur = parseFloat(window.getComputedStyle(el).marginTop) || 0;
-        el.style.marginTop = `${cur + push}px`;
-      }
-    } else {
-      if (top + height > nextPageStart - PAGE_BOTTOM_MARGIN) {
-        const push = nextPageStart + PAGE_TOP_MARGIN - top;
-        const cur = parseFloat(window.getComputedStyle(el).marginTop) || 0;
-        el.style.marginTop = `${cur + push}px`;
-      }
-    }
-  }
 }
 
 export async function generatePdf(htmlContent: string, filename: string): Promise<void> {
@@ -119,44 +47,7 @@ export async function generatePdf(htmlContent: string, filename: string): Promis
   document.body.appendChild(container);
 
   try {
-    // PDFs cannot be interactive — force all collapsible sections open & show expand icon
-    container.querySelectorAll('details').forEach((d) => {
-      d.setAttribute('open', '');
-      const summary = d.querySelector('summary');
-      if (summary && !summary.querySelector('.summary-icon')) {
-        const icon = document.createElement('span');
-        icon.className = 'summary-icon';
-        icon.textContent = '▼ ';
-        icon.style.display = 'inline-block';
-        icon.style.marginRight = '6px';
-        icon.style.fontSize = '0.75em';
-        icon.style.verticalAlign = 'middle';
-        summary.insertBefore(icon, summary.firstChild);
-      }
-    });
-
-    // Inject explicit list markers into DOM to avoid html2canvas native marker bugs
-    container.querySelectorAll('ol').forEach((ol) => {
-      let idx = 1;
-      const start = ol.getAttribute('start');
-      if (start) idx = parseInt(start, 10) || 1;
-      ol.querySelectorAll<HTMLElement>(':scope > li').forEach((li) => {
-        const marker = document.createElement('span');
-        marker.className = 'pdf-marker';
-        marker.textContent = `${idx}.`;
-        li.insertBefore(marker, li.firstChild);
-        idx++;
-      });
-    });
-
-    container.querySelectorAll('ul').forEach((ul) => {
-      ul.querySelectorAll<HTMLElement>(':scope > li').forEach((li) => {
-        const bullet = document.createElement('span');
-        bullet.className = 'pdf-bullet';
-        bullet.textContent = '•';
-        li.insertBefore(bullet, li.firstChild);
-      });
-    });
+    prepareDomForPaging(container);
 
     // Wait for any external images to load so dimensions are accurate during pagination and capture
     const images = Array.from(container.querySelectorAll('img'));
@@ -172,7 +63,7 @@ export async function generatePdf(htmlContent: string, filename: string): Promis
       );
     }
 
-    avoidPageBreaks(container, inner);
+    applyAvoidPageBreaks(container, inner);
 
     const canvas = await html2canvas(container, {
       scale: 2,

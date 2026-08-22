@@ -5,11 +5,15 @@
 }
 
 /* Scoped Live Document Preview Styles */
-#preview-document {
+#preview-document,
+.md2pdf-document {
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 15px;
   line-height: 1.7;
   color: #111111;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  text-align: left;
 }
 
 #preview-document h1,
@@ -79,19 +83,43 @@
   line-height: 1.4;
 }
 
-#preview-document ul {
-  margin: 0 0 1em 0;
-  padding-left: 1.8em;
-  list-style-type: disc;
-}
+#preview-document ul,
 #preview-document ol {
   margin: 0 0 1em 0;
   padding-left: 1.8em;
-  list-style-type: decimal;
+  list-style: none;
 }
 #preview-document li {
   margin-bottom: 0.35em;
+  position: relative;
 }
+#preview-document li p { margin: 0 0 0.35em 0; }
+#preview-document li p:last-child { margin-bottom: 0; }
+
+#preview-document .pdf-marker {
+  position: absolute;
+  left: -1.8em;
+  width: 1.4em;
+  text-align: right;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+#preview-document .pdf-bullet {
+  position: absolute;
+  left: -1.3em;
+  font-family: inherit;
+  font-size: 1.1em;
+  line-height: inherit;
+  color: inherit;
+}
+
+#preview-document hr { border: none; border-top: 1px solid #cccccc; margin: 1.5em 0; }
+#preview-document hr + h1,
+#preview-document hr + h2,
+#preview-document hr + h3,
+#preview-document hr + h4 { margin-top: 0.6em; }
 
 #preview-document details {
   display: block;
