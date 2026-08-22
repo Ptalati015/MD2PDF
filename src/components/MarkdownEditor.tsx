@@ -216,7 +216,9 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, on
           onKeyDown={handleKeyDown}
           placeholder="# Type or paste Markdown here, or drop a .md file..."
           spellCheck={false}
+          wrap="soft"
           className="w-full h-full p-4 bg-transparent text-zinc-100 font-mono text-sm leading-relaxed resize-none outline-none focus:ring-1 focus:ring-blue-500/30 selection:bg-blue-600/30"
+          style={{ overflow: 'hidden', overflowWrap: 'anywhere', wordBreak: 'break-word' }}
         />
       </div>
 

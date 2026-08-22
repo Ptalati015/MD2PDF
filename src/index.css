@@ -14,6 +14,8 @@
   background-color: #ffffff;
   box-sizing: border-box;
   text-align: left;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 #preview-document h1,
@@ -35,6 +37,16 @@
 #preview-document h4 { font-size: 1em; }
 
 #preview-document p { margin: 0 0 1em 0; }
+#preview-document p,
+#preview-document li,
+#preview-document blockquote,
+#preview-document td,
+#preview-document th,
+#preview-document dd,
+#preview-document dt {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 #preview-document a { color: #111111; text-decoration: underline; }
 #preview-document strong { font-weight: 700; }
 #preview-document em { font-style: italic; }
@@ -45,6 +57,7 @@
   background-color: #f4f4f4;
   padding: 0.1em 0.35em;
   border-radius: 3px;
+  white-space: pre-wrap;
 }
 #preview-document pre {
   background-color: #f8f8f8;

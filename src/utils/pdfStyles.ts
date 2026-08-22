@@ -10,6 +10,8 @@ export const unifiedDocumentStyles = `
     background-color: #ffffff;
     box-sizing: border-box;
     text-align: left;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -48,6 +50,31 @@ export const unifiedDocumentStyles = `
     margin: 0 0 1em 0;
   }
 
+  #preview-document p,
+  #pdf-render-root p,
+  .md2pdf-document p,
+  #preview-document li,
+  #pdf-render-root li,
+  .md2pdf-document li,
+  #preview-document blockquote,
+  #pdf-render-root blockquote,
+  .md2pdf-document blockquote,
+  #preview-document td,
+  #pdf-render-root td,
+  .md2pdf-document td,
+  #preview-document th,
+  #pdf-render-root th,
+  .md2pdf-document th,
+  #preview-document dd,
+  #pdf-render-root dd,
+  .md2pdf-document dd,
+  #preview-document dt,
+  #pdf-render-root dt,
+  .md2pdf-document dt {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
   #preview-document a, #pdf-render-root a, .md2pdf-document a {
     color: #111111;
     text-decoration: underline;
@@ -67,7 +94,7 @@ export const unifiedDocumentStyles = `
     background-color: #f4f4f4;
     padding: 0.1em 0.35em;
     border-radius: 3px;
-    white-space: nowrap;
+    white-space: pre-wrap;
   }
 
   #preview-document pre, #pdf-render-root pre, .md2pdf-document pre {
