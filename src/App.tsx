@@ -275,18 +275,25 @@ export default function App() {
             <StatusMessage status={status} filename={docName ? `${docName}.md` : undefined} error={error} />
 
             {status === 'file-selected' && (
-              <div className="flex flex-col gap-2">
-                <button
-                  onClick={handleGenerate}
-                  className="w-full py-3 px-6 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white transition-all shadow-lg shadow-blue-600/20"
-                >
-                  Generate PDF
-                </button>
+              <div className="flex flex-col gap-3 rounded-2xl border border-blue-900 bg-blue-950/30 p-4">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 text-xl">✏️</div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm text-blue-100">Edit this file in Studio</p>
+                    <p className="text-xs text-blue-200/70">Switch to the editor to refine the Markdown before exporting.</p>
+                  </div>
+                </div>
                 <button
                   onClick={() => setAppMode('studio')}
-                  className="text-xs text-blue-400 hover:underline text-center py-1"
+                  className="w-full py-3 px-6 rounded-xl font-semibold text-sm bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white transition-all shadow-lg shadow-blue-600/20"
                 >
-                  Edit this file in Studio →
+                  Open in Studio
+                </button>
+                <button
+                  onClick={handleGenerate}
+                  className="w-full py-3 px-6 rounded-xl font-semibold text-sm bg-zinc-800 hover:bg-zinc-700 active:scale-[0.99] text-white transition-all border border-zinc-700"
+                >
+                  Generate PDF
                 </button>
               </div>
             )}
@@ -302,7 +309,14 @@ export default function App() {
             )}
 
             {status === 'ready' && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-3 rounded-2xl border border-emerald-900 bg-emerald-950/25 p-4">
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 text-xl">✅</div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm text-emerald-100">PDF is ready</p>
+                    <p className="text-xs text-emerald-200/70">You can keep exporting, or open the file in Studio for more edits.</p>
+                  </div>
+                </div>
                 <button
                   onClick={handleGenerate}
                   className="w-full py-3 px-6 rounded-xl font-semibold text-sm bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
@@ -311,9 +325,9 @@ export default function App() {
                 </button>
                 <button
                   onClick={() => setAppMode('studio')}
-                  className="text-xs text-blue-400 hover:underline text-center py-1"
+                  className="w-full py-3 px-6 rounded-xl font-semibold text-sm bg-zinc-800 hover:bg-zinc-700 active:scale-[0.99] text-white transition-all border border-zinc-700"
                 >
-                  Edit this file in Studio →
+                  Open in Studio
                 </button>
               </div>
             )}
