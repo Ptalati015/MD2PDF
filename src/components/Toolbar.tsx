@@ -1,11 +1,24 @@
 interface Props {
   onInsert: (before: string, after?: string, defaultText?: string) => void;
+  onUndo: () => void;
+  onRedo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
   onClear: () => void;
   onLoadSample: () => void;
   onUploadClick: () => void;
 }
 
-export function Toolbar({ onInsert, onClear, onLoadSample, onUploadClick }: Props) {
+export function Toolbar({
+  onInsert,
+  onUndo,
+  onRedo,
+  canUndo,
+  canRedo,
+  onClear,
+  onLoadSample,
+  onUploadClick,
+}: Props) {
   const tools = [
     { label: 'B', title: 'Bold (Ctrl+B)', before: '**', after: '**', text: 'bold text', bold: true },
     { label: 'I', title: 'Italic (Ctrl+I)', before: '*', after: '*', text: 'italic text', italic: true },
@@ -31,6 +44,26 @@ export function Toolbar({ onInsert, onClear, onLoadSample, onUploadClick }: Prop
   return (
     <div className="flex items-center flex-wrap gap-1 p-2 bg-zinc-900 border-b border-zinc-800 text-xs">
       <div className="flex items-center flex-wrap gap-1">
+        <button
+          type="button"
+          title="Undo (Ctrl+Z)"
+          onClick={onUndo}
+          disabled={!canUndo}
+          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Undo
+        </button>
+        <button
+          type="button"
+          title="Redo (Ctrl+Y / Shift+Ctrl+Z)"
+          onClick={onRedo}
+          disabled={!canRedo}
+          className="px-2.5 py-1.5 rounded-md font-medium transition-colors text-zinc-300 hover:text-white hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Redo
+        </button>
+        <div className="w-px h-5 bg-zinc-800 mx-1" />
+
         {tools.map((t, idx) => {
           if (t.type === 'sep') {
             return <div key={idx} className="w-px h-5 bg-zinc-800 mx-1" />;

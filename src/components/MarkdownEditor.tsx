@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Toolbar } from './Toolbar';
 
 interface Props {
@@ -11,6 +11,69 @@ interface Props {
 export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const historyRef = useRef<{ value: string; start: number; end: number }[]>([
+    { value, start: 0, end: 0 },
+  ]);
+  const historyIndexRef = useRef(0);
+  const pendingSelectionRef = useRef<{ start: number; end: number } | null>(null);
+
+  const applySelection = () => {
+    const textarea = textareaRef.current;
+    const pending = pendingSelectionRef.current;
+    if (!textarea || !pending) return;
+
+    requestAnimationFrame(() => {
+      textarea.focus();
+      textarea.setSelectionRange(pending.start, pending.end);
+      pendingSelectionRef.current = null;
+    });
+  };
+
+  const pushHistory = (nextValue: string, start: number, end: number) => {
+    const entries = historyRef.current;
+    const index = historyIndexRef.current;
+    const current = entries[index];
+
+    if (current && current.value === nextValue) {
+      current.start = start;
+      current.end = end;
+      return;
+    }
+
+    const trimmed = entries.slice(0, index + 1);
+    trimmed.push({ value: nextValue, start, end });
+
+    // Keep history bounded to avoid unbounded memory growth.
+    if (trimmed.length > 500) trimmed.shift();
+
+    historyRef.current = trimmed;
+    historyIndexRef.current = trimmed.length - 1;
+  };
+
+  const applyValueWithHistory = (nextValue: string, start: number, end: number) => {
+    pushHistory(nextValue, start, end);
+    pendingSelectionRef.current = { start, end };
+    onChange(nextValue);
+    applySelection();
+  };
+
+  const handleUndo = () => {
+    if (historyIndexRef.current <= 0) return;
+    historyIndexRef.current -= 1;
+    const entry = historyRef.current[historyIndexRef.current];
+    pendingSelectionRef.current = { start: entry.start, end: entry.end };
+    onChange(entry.value);
+    applySelection();
+  };
+
+  const handleRedo = () => {
+    if (historyIndexRef.current >= historyRef.current.length - 1) return;
+    historyIndexRef.current += 1;
+    const entry = historyRef.current[historyIndexRef.current];
+    pendingSelectionRef.current = { start: entry.start, end: entry.end };
+    onChange(entry.value);
+    applySelection();
+  };
 
   const handleInsert = (before: string, after: string = '', defaultText: string = '') => {
     const textarea = textareaRef.current;
@@ -23,16 +86,13 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample }: 
 
     const replacement = `${before}${textToWrap}${after}`;
     const newValue = value.substring(0, start) + replacement + value.substring(end);
-    onChange(newValue);
 
-    setTimeout(() => {
-      textarea.focus();
-      if (selected) {
-        textarea.setSelectionRange(start + before.length, start + before.length + selected.length);
-      } else {
-        textarea.setSelectionRange(start + before.length, start + before.length + defaultText.length);
-      }
-    }, 0);
+    const selectionStart = start + before.length;
+    const selectionEnd = selected
+      ? start + before.length + selected.length
+      : start + before.length + defaultText.length;
+
+    applyValueWithHistory(newValue, selectionStart, selectionEnd);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -52,38 +112,51 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample }: 
         const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
         if (value.substring(lineStart, lineStart + 2) === '  ') {
           const updated = value.substring(0, lineStart) + value.substring(lineStart + 2);
-          onChange(updated);
-          setTimeout(() => {
-            textarea.setSelectionRange(Math.max(lineStart, start - 2), Math.max(lineStart, end - 2));
-          }, 0);
+          const nextStart = Math.max(lineStart, start - 2);
+          const nextEnd = Math.max(lineStart, end - 2);
+          applyValueWithHistory(updated, nextStart, nextEnd);
         }
       } else {
         // Indent 2 spaces
         const updated = value.substring(0, start) + '  ' + value.substring(end);
-        onChange(updated);
-        setTimeout(() => {
-          textarea.setSelectionRange(start + 2, start + 2);
-        }, 0);
+        applyValueWithHistory(updated, start + 2, start + 2);
       }
       return;
     }
 
     // Ctrl/Cmd shortcuts
     if (e.ctrlKey || e.metaKey) {
-      if (e.key.toLowerCase() === 'b') {
+      const key = e.key.toLowerCase();
+
+      if (key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        handleUndo();
+      } else if ((key === 'z' && e.shiftKey) || key === 'y') {
+        e.preventDefault();
+        handleRedo();
+      } else if (key === 'b') {
         e.preventDefault();
         handleInsert('**', '**', 'bold text');
-      } else if (e.key.toLowerCase() === 'i') {
+      } else if (key === 'i') {
         e.preventDefault();
         handleInsert('*', '*', 'italic text');
-      } else if (e.key.toLowerCase() === 'k') {
+      } else if (key === 'k') {
         e.preventDefault();
         handleInsert('[', '](https://example.com)', 'link text');
-      } else if (e.key.toLowerCase() === 'e') {
+      } else if (key === 'e') {
         e.preventDefault();
         handleInsert('`', '`', 'code');
       }
     }
+  };
+
+  const handleTextChange = (nextValue: string, start: number, end: number) => {
+    pushHistory(nextValue, start, end);
+    onChange(nextValue);
+  };
+
+  const handleClear = () => {
+    applyValueWithHistory('', 0, 0);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -122,7 +195,11 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample }: 
     >
       <Toolbar
         onInsert={handleInsert}
-        onClear={() => onChange('')}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        canUndo={historyIndexRef.current > 0}
+        canRedo={historyIndexRef.current < historyRef.current.length - 1}
+        onClear={handleClear}
         onLoadSample={onLoadSample}
         onUploadClick={() => fileInputRef.current?.click()}
       />
@@ -131,7 +208,9 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample }: 
         <textarea
           ref={textareaRef}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) =>
+            handleTextChange(e.target.value, e.currentTarget.selectionStart, e.currentTarget.selectionEnd)
+          }
           onKeyDown={handleKeyDown}
           placeholder="# Type or paste Markdown here, or drop a .md file..."
           spellCheck={false}
