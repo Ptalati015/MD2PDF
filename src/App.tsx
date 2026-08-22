@@ -17,6 +17,7 @@ export default function App() {
   const [docName, setDocName] = useState<string>('document');
   const [status, setStatus] = useState<AppStatus>('idle');
   const [error, setError] = useState<string>('');
+  const isEmptyDocument = !markdownContent.trim();
 
   // Live parsed HTML
   const parsedHtml = useMemo(() => {
@@ -34,7 +35,7 @@ export default function App() {
   }, [markdownContent]);
 
   const handleGenerate = async () => {
-    if (!markdownContent.trim()) {
+    if (isEmptyDocument) {
       setStatus('error');
       setError('Cannot generate a PDF from an empty document. Add or upload Markdown content first.');
       return;
@@ -175,6 +176,7 @@ export default function App() {
           <button
             onClick={handleGenerate}
             disabled={status === 'generating'}
+            title={isEmptyDocument ? 'Add or upload Markdown content before generating a PDF' : 'Download PDF'}
             className="px-4 py-1.5 rounded-lg font-semibold text-xs bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white transition-all shadow-md flex items-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {status === 'generating' ? (
@@ -195,6 +197,28 @@ export default function App() {
       {/* Main App Content Area */}
       {appMode === 'studio' ? (
         <main className="flex-1 p-3 sm:p-4 flex flex-col gap-3 min-h-0 overflow-hidden">
+          {(status === 'generating' || isEmptyDocument) && (
+            <div className="flex justify-center">
+              {status === 'generating' ? (
+                <div className="w-full max-w-4xl flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-950/40 border border-blue-900 text-blue-200">
+                  <span className="text-xl animate-spin">⚙️</span>
+                  <div>
+                    <p className="font-medium text-sm">Generating PDF…</p>
+                    <p className="text-xs text-blue-200/70">Rendering the current Markdown into a downloadable file.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full max-w-4xl flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-950/40 border border-amber-900 text-amber-200">
+                  <span className="text-xl">⚠️</span>
+                  <div>
+                    <p className="font-medium text-sm">No content to export yet</p>
+                    <p className="text-xs text-amber-200/70">Add or upload Markdown, then click Download PDF.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3 min-h-[calc(100vh-100px)]">
             {/* Left: Markdown Editor */}
             {(viewLayout === 'editor' || viewLayout === 'split') && (
@@ -235,6 +259,16 @@ export default function App() {
                 Drop your Markdown file for immediate client-side PDF export
               </p>
             </div>
+
+            {isEmptyDocument && status === 'idle' && (
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-950/40 border border-amber-900 text-amber-200">
+                <span className="text-xl">⚠️</span>
+                <div>
+                  <p className="font-medium text-sm">No document loaded</p>
+                  <p className="text-xs text-amber-200/70">Upload a Markdown file to enable export.</p>
+                </div>
+              </div>
+            )}
 
             {status === 'idle' && <FileDropZone onFile={handleQuickConvertUpload} />}
 
