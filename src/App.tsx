@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { FileDropZone } from './components/FileDropZone';
 import { MarkdownEditor } from './components/MarkdownEditor';
 import { MarkdownPreview } from './components/MarkdownPreview';
+import { FeatureGuideModal } from './components/FeatureGuideModal';
 import { StatusMessage, type AppStatus } from './components/StatusMessage';
 import { parseMarkdown } from './hooks/useMarkdownParser';
 import { generatePdf } from './hooks/usePdfGenerator';
@@ -24,6 +25,10 @@ export default function App() {
   const [docName, setDocName] = useState<string>('document');
   const [status, setStatus] = useState<AppStatus>('idle');
   const [error, setError] = useState<string>('');
+  const [isGuideOpen, setIsGuideOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem('md2pdf-guide-seen') !== 'true';
+  });
   const isEmptyDocument = !markdownContent.trim();
 
   useEffect(() => {
@@ -205,6 +210,15 @@ export default function App() {
 
         {/* Right: Actions & Download Button */}
         <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => setIsGuideOpen(true)}
+            title="Open Feature Guide"
+            className="h-8 px-2.5 flex items-center justify-center gap-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-[var(--border-strong)] transition-colors text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          >
+            <span>✨</span>
+            <span className="hidden sm:inline">Guide</span>
+          </button>
+
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -440,6 +454,9 @@ export default function App() {
           </span>
         </div>
       </footer>
+
+      {/* Interactive Feature Guide Modal */}
+      <FeatureGuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
     </div>
   );
 }
