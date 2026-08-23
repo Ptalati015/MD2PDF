@@ -7,10 +7,21 @@ interface Props {
   onUploadFile: (content: string, filename: string) => void;
   onLoadSample: () => void;
   onClear?: () => void;
+  onScroll?: (e: React.UIEvent<HTMLTextAreaElement>) => void;
+  textareaRefProp?: React.RefObject<HTMLTextAreaElement | null>;
 }
 
-export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, onClear }: Props) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+export function MarkdownEditor({
+  value,
+  onChange,
+  onUploadFile,
+  onLoadSample,
+  onClear,
+  onScroll,
+  textareaRefProp,
+}: Props) {
+  const localTextareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const textareaRef = textareaRefProp || localTextareaRef;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeColor, setActiveColor] = useState('#ef4444');
   const historyRef = useRef<{ value: string; start: number; end: number }[]>([
@@ -289,7 +300,7 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, on
         onUploadClick={() => fileInputRef.current?.click()}
       />
 
-      <div className="relative flex-1 flex">
+      <div className="relative flex-1 min-h-0 flex flex-col">
         <textarea
           ref={textareaRef}
           value={value}
@@ -297,11 +308,12 @@ export function MarkdownEditor({ value, onChange, onUploadFile, onLoadSample, on
             handleTextChange(e.target.value, e.currentTarget.selectionStart, e.currentTarget.selectionEnd)
           }
           onKeyDown={handleKeyDown}
+          onScroll={onScroll}
           placeholder="# Type or paste Markdown here, or drop a .md file..."
           spellCheck={false}
           wrap="soft"
-          className="w-full h-full p-4 bg-transparent text-[var(--text-primary)] font-mono text-sm leading-relaxed resize-none outline-none focus:ring-1 focus:ring-blue-500/30 selection:bg-blue-600/30"
-          style={{ overflow: 'hidden', overflowWrap: 'anywhere', wordBreak: 'break-word' }}
+          className="w-full h-full p-4 bg-transparent text-[var(--text-primary)] font-mono text-sm leading-relaxed resize-none outline-none focus:ring-1 focus:ring-blue-500/30 selection:bg-blue-600/30 overflow-y-auto"
+          style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
         />
       </div>
 

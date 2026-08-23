@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { FileDropZone } from './components/FileDropZone';
 import { MarkdownEditor } from './components/MarkdownEditor';
 import { MarkdownPreview } from './components/MarkdownPreview';
@@ -29,6 +29,56 @@ export default function App() {
   useEffect(() => {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
+
+  // Synchronized scrolling between editor and preview
+  const editorScrollRef = useRef<HTMLTextAreaElement | null>(null);
+  const previewScrollRef = useRef<HTMLDivElement | null>(null);
+  const activeScrollSourceRef = useRef<'editor' | 'preview' | null>(null);
+  const scrollTimeoutRef = useRef<number | null>(null);
+
+  const handleEditorScroll = () => {
+    const editor = editorScrollRef.current;
+    const preview = previewScrollRef.current;
+    if (!editor || !preview) return;
+
+    if (activeScrollSourceRef.current && activeScrollSourceRef.current !== 'editor') return;
+    activeScrollSourceRef.current = 'editor';
+
+    const editorMax = editor.scrollHeight - editor.clientHeight;
+    const previewMax = preview.scrollHeight - preview.clientHeight;
+
+    if (editorMax > 0 && previewMax > 0) {
+      const ratio = editor.scrollTop / editorMax;
+      preview.scrollTop = ratio * previewMax;
+    }
+
+    if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      activeScrollSourceRef.current = null;
+    }, 100);
+  };
+
+  const handlePreviewScroll = () => {
+    const editor = editorScrollRef.current;
+    const preview = previewScrollRef.current;
+    if (!editor || !preview) return;
+
+    if (activeScrollSourceRef.current && activeScrollSourceRef.current !== 'preview') return;
+    activeScrollSourceRef.current = 'preview';
+
+    const editorMax = editor.scrollHeight - editor.clientHeight;
+    const previewMax = preview.scrollHeight - preview.clientHeight;
+
+    if (editorMax > 0 && previewMax > 0) {
+      const ratio = preview.scrollTop / previewMax;
+      editor.scrollTop = ratio * editorMax;
+    }
+
+    if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      activeScrollSourceRef.current = null;
+    }, 100);
+  };
 
   // Live parsed HTML
   const parsedHtml = useMemo(() => {
@@ -99,10 +149,10 @@ export default function App() {
   return (
     <div
       data-theme={theme}
-      className="min-h-screen bg-[var(--bg-app)] text-[var(--text-primary)] flex flex-col font-sans"
+      className="h-screen max-h-screen bg-[var(--bg-app)] text-[var(--text-primary)] flex flex-col font-sans overflow-hidden"
     >
       {/* Top Navigation Header */}
-      <header className="h-14 border-b border-[var(--border-subtle)] bg-[var(--bg-header)] backdrop-blur-md px-4 sm:px-6 flex items-center justify-between gap-4 sticky top-0 z-50">
+      <header className="h-14 flex-shrink-0 border-b border-[var(--border-subtle)] bg-[var(--bg-header)] backdrop-blur-md px-4 sm:px-6 flex items-center justify-between gap-4 z-50">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <img src="/favicon.ico" alt="MD2PDF logo" className="w-6 h-6" />
@@ -218,9 +268,9 @@ export default function App() {
 
       {/* Main App Content Area */}
       {appMode === 'studio' ? (
-        <main className="flex-1 p-3 sm:p-4 flex flex-col gap-3 min-h-0 overflow-hidden">
+        <main className="flex-1 min-h-0 p-3 sm:p-4 flex flex-col gap-3 overflow-hidden">
           {(status === 'generating' || isEmptyDocument) && (
-            <div className="flex justify-center">
+            <div className="flex justify-center flex-shrink-0">
               {status === 'generating' ? (
                 <div className="w-full max-w-4xl flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--card-info-bg)] border border-[var(--card-info-border)] text-[var(--card-info-text)]">
                   <span className="text-xl animate-spin">⚙️</span>
@@ -241,24 +291,30 @@ export default function App() {
             </div>
           )}
 
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3 min-h-[calc(100vh-100px)]">
+          <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 gap-3 h-full overflow-hidden">
             {/* Left: Markdown Editor */}
             {(viewLayout === 'editor' || viewLayout === 'split') && (
-              <div className={`${viewLayout === 'editor' ? 'md:col-span-2' : ''} h-full min-h-[500px]`}>
+              <div className={`${viewLayout === 'editor' ? 'md:col-span-2' : ''} h-full min-h-0 overflow-hidden`}>
                 <MarkdownEditor
                   value={markdownContent}
                   onChange={handleStudioChange}
                   onUploadFile={handleStudioUpload}
                   onLoadSample={handleLoadSample}
                   onClear={handleStudioClear}
+                  textareaRefProp={editorScrollRef}
+                  onScroll={handleEditorScroll}
                 />
               </div>
             )}
 
             {/* Right: Live Preview */}
             {(viewLayout === 'preview' || viewLayout === 'split') && (
-              <div className={`${viewLayout === 'preview' ? 'md:col-span-2' : ''} h-full min-h-[500px]`}>
-                <MarkdownPreview html={parsedHtml} />
+              <div className={`${viewLayout === 'preview' ? 'md:col-span-2' : ''} h-full min-h-0 overflow-hidden`}>
+                <MarkdownPreview
+                  html={parsedHtml}
+                  scrollRef={previewScrollRef}
+                  onScroll={handlePreviewScroll}
+                />
               </div>
             )}
 

@@ -11,9 +11,11 @@ import { pdfStyles } from '../utils/pdfStyles';
 
 interface Props {
   html: string;
+  scrollRef?: React.RefObject<HTMLDivElement | null>;
+  onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
 }
 
-export function MarkdownPreview({ html }: Props) {
+export function MarkdownPreview({ html, scrollRef, onScroll }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const [pageCount, setPageCount] = useState<number>(1);
@@ -57,23 +59,29 @@ export function MarkdownPreview({ html }: Props) {
 
   return (
     <div className="flex flex-col h-full bg-[var(--bg-panel)] border border-[var(--border-subtle)] rounded-xl overflow-hidden shadow-2xl">
-      <div className="flex items-center justify-between px-4 py-2.5 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] text-xs text-[var(--text-secondary)] font-medium select-none">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Live Document Preview</span>
+      <div className="flex-shrink-0 bg-[var(--bg-panel)] rounded-t-xl border-b border-[var(--border-subtle)]">
+        <div className="flex items-center justify-between px-4 py-2.5 bg-[var(--bg-surface)] text-xs text-[var(--text-secondary)] font-medium select-none rounded-t-xl">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Live Document Preview</span>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="px-2 py-0.5 rounded bg-[var(--bg-surface-strong)] text-[var(--text-secondary)] font-mono border border-[var(--border-strong)]">
+              {pageCount} {pageCount === 1 ? 'Page' : 'Pages'} (A4)
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-xs">
-          <span className="px-2 py-0.5 rounded bg-[var(--bg-surface-strong)] text-[var(--text-secondary)] font-mono border border-[var(--border-strong)]">
-            {pageCount} {pageCount === 1 ? 'Page' : 'Pages'} (A4)
-          </span>
+
+        <div className="px-4 py-1.5 bg-[var(--bg-surface)] border-t border-[var(--border-subtle)] text-[11px] text-amber-600">
+          Page break indicators are heuristic and may not always match the final PDF exactly. Most documents render cleanly, but complex Markdown can still vary slightly.
         </div>
       </div>
 
-      <div className="px-4 py-1.5 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] text-[11px] text-amber-600">
-        Page break indicators are heuristic and may not always match the final PDF exactly. Most documents render cleanly, but complex Markdown can still vary slightly.
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-[var(--bg-app)] flex justify-center">
+      <div
+        ref={scrollRef}
+        onScroll={onScroll}
+        className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-8 bg-[var(--bg-app)] flex justify-center"
+      >
         {html.trim() ? (
           <div className="relative">
             {/* The main A4 rendered page canvas */}

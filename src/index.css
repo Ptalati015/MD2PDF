@@ -72,6 +72,25 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* Sleek custom scrollbars for panels & textareas */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
 /* Scoped Live Document Preview Styles */
 #preview-document,
 .md2pdf-document {

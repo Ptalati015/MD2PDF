@@ -58,7 +58,7 @@ export function Toolbar({
   ];
 
   return (
-    <div className="flex items-center flex-wrap gap-1 p-2 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] text-xs">
+    <div className="sticky top-0 z-10 flex-shrink-0 flex items-center flex-wrap gap-1 p-2 bg-[var(--bg-surface)] border-b border-[var(--border-subtle)] text-xs">
       <div className="flex items-center flex-wrap gap-1">
         <button
           type="button"
